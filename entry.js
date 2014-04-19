@@ -4,14 +4,17 @@ Bot.register('DummyBot', function(board_state, player_state, move) {
   var dirs = board.safe_directions(me);
   var tiles = board.surrounding_tiles(me);
   
-  function calcScore(tile, d) {
+  function calcScore(tile, d, pastTile) {
     var surr = board.safe_surrounding_tiles(tile);
     if (d == 0) {
       return surr.length;
     }
     var score = 0;
     for (var i = 0; i < surr.length; i++) {
-      score = score + calcScore(surr[i], d-1);
+      if (surr[i] == pastTile) {
+       continue; 
+      }
+      score = score + calcScore(surr[i], d-1, tile);
     }
     return score + surr.length;
   }
@@ -19,7 +22,7 @@ Bot.register('DummyBot', function(board_state, player_state, move) {
   var scores = new Array();
   for (var i = 0; i < dirs.length; i++) {
     var dir = dirs[i];
-    scores[i] = calcScore(tiles[dir], 5) 
+    scores[i] = calcScore(tiles[dir], 6, me) 
   }
   
   var max = scores[0];
